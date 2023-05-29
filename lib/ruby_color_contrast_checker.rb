@@ -42,4 +42,24 @@ module RubyColorContrastChecker
 
     puts output
   end
+
+  def self.run
+    loop do
+      puts
+      first = prompt_input("Enter the first hex color string: \n> #")
+      second = prompt_input("Enter the second hex color string: \n> #")
+      puts
+
+      if !valid_hex?(first) || !valid_hex?(second)
+        puts "The Hex color code is invalid."
+      else
+        data = fetch_data(first, second)
+        print_data(data)
+      end
+
+      puts
+      input = prompt_input("Continue? (yes / no) ")
+      break if input.downcase == "no"
+    end
+  end
 end
