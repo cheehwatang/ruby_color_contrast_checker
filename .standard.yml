@@ -1,0 +1,8 @@
+# For available configuration options, see:
+#   https://github.com/testdouble/standard
+ruby_version: 3.1.2 # default: RUBY_VERSION
+
+fix: true # default: false
+parallel: false # default: false
+format: Standard::Formatter # default: Standard::Formatter
+default_ignores: true # default: true
