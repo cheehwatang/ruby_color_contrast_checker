@@ -27,27 +27,33 @@ RSpec.describe RubyColorContrastChecker do
 
   context "self.fetch_data method" do
     it "takes 2 valid 6-digit hex string arguments and returns hash of the json response" do
-      actual = sut.fetch_data("000000", "FFFFFF")
+      response = Net::HTTPSuccess.new(1.0, "200", "OK")
+      hex1 = "000000"
+      hex2 = "FFFFFF"
 
-      expect(actual).to eq({
-        "ratio" => "21",
-        "AA" => "pass",
-        "AALarge" => "pass",
-        "AAA" => "pass",
-        "AAALarge" => "pass"
-      })
+      expect(URI).to receive(:parse).with("https://webaim.org/resources/contrastchecker/?fcolor=#{hex1}&bcolor=#{hex2}&api").and_return("url")
+      expect(Net::HTTP).to receive(:get_response).with("url").and_return(response)
+      expect(response).to receive(:body).and_return("data")
+      expect(JSON).to receive(:parse).with("data").and_return("data")
+
+      actual = sut.fetch_data(hex1, hex2)
+
+      expect(actual).to eq("data")
     end
 
     it "takes 2 valid 3-digit hex string arguments and returns hash of the json response" do
-      actual = sut.fetch_data("000", "FFF")
+      response = Net::HTTPSuccess.new(1.0, "200", "OK")
+      hex1 = "000"
+      hex2 = "FFF"
 
-      expect(actual).to eq({
-        "ratio" => "21",
-        "AA" => "pass",
-        "AALarge" => "pass",
-        "AAA" => "pass",
-        "AAALarge" => "pass"
-      })
+      expect(URI).to receive(:parse).with("https://webaim.org/resources/contrastchecker/?fcolor=000000&bcolor=FFFFFF&api").and_return("url")
+      expect(Net::HTTP).to receive(:get_response).with("url").and_return(response)
+      expect(response).to receive(:body).and_return("data")
+      expect(JSON).to receive(:parse).with("data").and_return("data")
+
+      actual = sut.fetch_data(hex1, hex2)
+
+      expect(actual).to eq("data")
     end
   end
 
