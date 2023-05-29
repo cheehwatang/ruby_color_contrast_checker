@@ -24,4 +24,9 @@ module RubyColorContrastChecker
     chars = hex.chars
     "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
   end
+
+  def self.prompt_input(message)
+    print message
+    gets.chomp
+  end
 end

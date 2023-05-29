@@ -63,4 +63,14 @@ RSpec.describe RubyColorContrastChecker do
       end
     end
   end
+
+  context "self.prompt_input method" do
+    it "takes a message, prints the message and returns the user input" do
+      allow(sut).to receive(:gets).and_return("ABC")
+      message = "Please enter ABC"
+
+      expect(sut.prompt_input(message)).to eq("ABC")
+      expect { sut.prompt_input(message) }.to output(message).to_stdout
+    end
+  end
 end
