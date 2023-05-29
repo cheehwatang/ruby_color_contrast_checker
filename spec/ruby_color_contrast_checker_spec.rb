@@ -26,8 +26,20 @@ RSpec.describe RubyColorContrastChecker do
   end
 
   context "self.fetch_data method" do
-    it "takes 2 valid hex string arguments and returns hash of the json response" do
+    it "takes 2 valid 6-digit hex string arguments and returns hash of the json response" do
       actual = sut.fetch_data("000000", "FFFFFF")
+
+      expect(actual).to eq({
+        "ratio" => "21",
+        "AA" => "pass",
+        "AALarge" => "pass",
+        "AAA" => "pass",
+        "AAALarge" => "pass"
+      })
+    end
+
+    it "takes 2 valid 3-digit hex string arguments and returns hash of the json response" do
+      actual = sut.fetch_data("000", "FFF")
 
       expect(actual).to eq({
         "ratio" => "21",

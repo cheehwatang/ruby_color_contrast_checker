@@ -11,6 +11,9 @@ module RubyColorContrastChecker
   end
 
   def self.fetch_data(hex1, hex2)
+    hex1 = convert_3hex_to_6hex(hex1) if hex1.length == 3
+    hex2 = convert_3hex_to_6hex(hex2) if hex2.length == 3
+
     uri = URI("https://webaim.org/resources/contrastchecker/?fcolor=#{hex1}&bcolor=#{hex2}&api")
     response = Net::HTTP.get_response(uri)
 
