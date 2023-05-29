@@ -24,4 +24,18 @@ RSpec.describe RubyColorContrastChecker do
       expect(sut.valid_hex?("GGG")).to be(false)
     end
   end
+
+  context "self.fetch_data method" do
+    it "takes 2 valid hex string arguments and returns hash of the json response" do
+      actual = sut.fetch_data("000000", "FFFFFF")
+
+      expect(actual).to eq({
+        "ratio" => "21",
+        "AA" => "pass",
+        "AALarge" => "pass",
+        "AAA" => "pass",
+        "AAALarge" => "pass"
+      })
+    end
+  end
 end
