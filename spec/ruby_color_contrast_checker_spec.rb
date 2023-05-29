@@ -73,4 +73,27 @@ RSpec.describe RubyColorContrastChecker do
       expect { sut.prompt_input(message) }.to output(message).to_stdout
     end
   end
+
+  context "self.print_data method" do
+    it "takes in the data hash and print the data" do
+      data = {
+        "ratio" => "21",
+        "AA" => "pass",
+        "AALarge" => "pass",
+        "AAA" => "pass",
+        "AAALarge" => "pass"
+      }
+
+      expected = <<~MLS
+        Contrast Ratio    : 21
+
+        Level AA          : PASS
+        Level AA (Large)  : PASS
+        Level AAA         : PASS
+        Level AAA (Large) : PASS
+      MLS
+
+      expect { sut.print_data(data) }.to output(expected).to_stdout
+    end
+  end
 end

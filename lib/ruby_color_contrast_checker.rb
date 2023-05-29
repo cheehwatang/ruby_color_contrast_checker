@@ -29,4 +29,17 @@ module RubyColorContrastChecker
     print message
     gets.chomp
   end
+
+  def self.print_data(data)
+    output = <<~MLS
+      Contrast Ratio    : #{data["ratio"]}
+
+      Level AA          : #{data["AA"].upcase}
+      Level AA (Large)  : #{data["AALarge"].upcase}
+      Level AAA         : #{data["AAA"].upcase}
+      Level AAA (Large) : #{data["AAALarge"].upcase}
+    MLS
+
+    puts output
+  end
 end
