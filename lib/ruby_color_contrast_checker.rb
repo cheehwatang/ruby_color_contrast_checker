@@ -16,4 +16,9 @@ module RubyColorContrastChecker
 
     JSON.parse(response.body)
   end
+
+  def self.convert_3hex_to_6hex(hex)
+    chars = hex.chars
+    "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
+  end
 end

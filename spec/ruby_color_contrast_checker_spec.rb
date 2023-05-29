@@ -38,4 +38,17 @@ RSpec.describe RubyColorContrastChecker do
       })
     end
   end
+
+  context "self.convert_3hex_to_6hex method" do
+    it "takes a valid 3-digit hex string argument and returns the 6-digit hex string" do
+      inputs = ["000", "555", "aaa", "FFF"]
+      expected = ["000000", "555555", "aaaaaa", "FFFFFF"]
+
+      inputs.each_with_index do |input, index|
+        actual = sut.convert_3hex_to_6hex(input)
+
+        expect(actual).to eq(expected[index])
+      end
+    end
+  end
 end
