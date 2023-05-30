@@ -48,14 +48,22 @@ module RubyColorContrastChecker
     green(float_string)
   end
 
+  def colorize_status(status_string)
+    status_string = status_string.upcase
+
+    return red(status_string) if status_string == "FAIL"
+
+    green(status_string)
+  end
+
   def print_data(data)
     output = <<~MLS
       Contrast Ratio    : #{colorize_float(data["ratio"])}
 
-      Level AA          : #{data["AA"].upcase}
-      Level AA (Large)  : #{data["AALarge"].upcase}
-      Level AAA         : #{data["AAA"].upcase}
-      Level AAA (Large) : #{data["AAALarge"].upcase}
+      Level AA          : #{colorize_status(data["AA"])}
+      Level AA (Large)  : #{colorize_status(data["AALarge"])}
+      Level AAA         : #{colorize_status(data["AAA"])}
+      Level AAA (Large) : #{colorize_status(data["AAALarge"])}
     MLS
 
     puts output

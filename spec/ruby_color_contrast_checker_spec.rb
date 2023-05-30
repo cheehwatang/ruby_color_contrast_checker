@@ -110,7 +110,7 @@ RSpec.describe RubyColorContrastChecker do
     it "takes a float string and colorize to red if float value less than 4.5" do
       red_string = "\e[31m1.0\e[0m"
 
-      allow(sut).to receive(:green).and_return(red_string)
+      allow(sut).to receive(:red).and_return(red_string)
       actual = sut.colorize_float("1.0")
 
       expect(actual).to eq(red_string)
@@ -126,9 +126,30 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
+  context "colorize_status method" do
+    it "takes a string, upcase and return the red string if the upcase is equal to 'FAIL'" do
+      red_string = "\e[31mFAIL\e[0m"
+
+      allow(sut).to receive(:red).and_return(red_string)
+      actual = sut.colorize_status("fail")
+
+      expect(actual).to eq(red_string)
+    end
+
+    it "takes a string, upcase and return the green string if the upcase is not equal to 'FAIL'" do
+      green_string = "\e[32mPASS\e[0m"
+
+      allow(sut).to receive(:green).and_return(green_string)
+      actual = sut.colorize_status("pass")
+
+      expect(actual).to eq(green_string)
+    end
+  end
+
   context "print_data method" do
     it "takes in the data hash and print the data" do
       allow(sut).to receive(:colorize_float).and_return("\e[32m21\e[0m")
+      allow(sut).to receive(:colorize_status).and_return("\e[32mPASS\e[0m")
 
       data = {
         "ratio" => "21",
@@ -141,10 +162,10 @@ RSpec.describe RubyColorContrastChecker do
       expected = <<~MLS
         Contrast Ratio    : \e[32m21\e[0m
 
-        Level AA          : PASS
-        Level AA (Large)  : PASS
-        Level AAA         : PASS
-        Level AAA (Large) : PASS
+        Level AA          : \e[32mPASS\e[0m
+        Level AA (Large)  : \e[32mPASS\e[0m
+        Level AAA         : \e[32mPASS\e[0m
+        Level AAA (Large) : \e[32mPASS\e[0m
       MLS
 
       expect { sut.print_data(data) }.to output(expected).to_stdout
