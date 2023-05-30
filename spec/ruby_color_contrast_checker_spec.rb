@@ -114,9 +114,9 @@ RSpec.describe RubyColorContrastChecker do
   end
 
   context "run method" do
-    it "start the cli app, input valid hex strings, print data and exit app" do
-      data = {data: "test"}
+    data = {"ratio" => "21"}
 
+    it "start the cli app, input valid hex strings, print data and exit app" do
       allow(sut).to receive(:prompt_input).and_return("000", "FFF", "no")
       expect(sut).to receive(:fetch_data).with("000", "FFF").and_return(data)
       expect(sut).to receive(:print_data).with(data)
@@ -133,8 +133,6 @@ RSpec.describe RubyColorContrastChecker do
     end
 
     it "start the cli app and keep looping until user enters 'no' to exit the app" do
-      data = {data: "test"}
-
       allow(sut).to receive(:prompt_input).and_return("000", "FFF", "yes", "000", "FFF", "no")
       expect(sut).to receive(:fetch_data).twice.with("000", "FFF").and_return(data)
       expect(sut).to receive(:print_data).twice.with(data)
