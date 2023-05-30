@@ -58,12 +58,12 @@ module RubyColorContrastChecker
 
   def print_data(data)
     output = <<~MLS
-      Contrast Ratio    : #{colorize_float(data["ratio"])}
+      \e[36mContrast Ratio\e[0m    : #{colorize_float(data["ratio"])}
 
-      Level AA          : #{colorize_status(data["AA"])}
-      Level AA (Large)  : #{colorize_status(data["AALarge"])}
-      Level AAA         : #{colorize_status(data["AAA"])}
-      Level AAA (Large) : #{colorize_status(data["AAALarge"])}
+      \e[36mLevel AA\e[0m          : #{colorize_status(data["AA"])}
+      \e[36mLevel AA (Large)\e[0m  : #{colorize_status(data["AALarge"])}
+      \e[36mLevel AAA\e[0m         : #{colorize_status(data["AAA"])}
+      \e[36mLevel AAA (Large)\e[0m : #{colorize_status(data["AAALarge"])}
     MLS
 
     puts output
@@ -72,19 +72,19 @@ module RubyColorContrastChecker
   def run
     loop do
       puts
-      first = prompt_input("Enter the first hex color string: \n> #")
-      second = prompt_input("Enter the second hex color string: \n> #")
+      first = prompt_input("\e[36mEnter the first hex color string:\e[0m \n\e[30m> #\e[0m")
+      second = prompt_input("\e[36mEnter the second hex color string:\e[0m \n\e[30m> #\e[0m")
       puts
 
       if !valid_hex?(first) || !valid_hex?(second)
-        puts "The Hex color code is invalid."
+        puts "\e[31mThe Hex color code is invalid.\e[0m"
       else
         data = fetch_data(first, second)
         print_data(data)
       end
 
       puts
-      input = prompt_input("Continue? (yes / no) ")
+      input = prompt_input("\e[33mContinue?\e[0m (\e[32myes\e[0m / \e[31mno\e[0m) ")
       break if input.downcase == "no"
     end
   end

@@ -160,12 +160,12 @@ RSpec.describe RubyColorContrastChecker do
       }
 
       expected = <<~MLS
-        Contrast Ratio    : \e[32m21\e[0m
+        \e[36mContrast Ratio\e[0m    : \e[32m21\e[0m
 
-        Level AA          : \e[32mPASS\e[0m
-        Level AA (Large)  : \e[32mPASS\e[0m
-        Level AAA         : \e[32mPASS\e[0m
-        Level AAA (Large) : \e[32mPASS\e[0m
+        \e[36mLevel AA\e[0m          : \e[32mPASS\e[0m
+        \e[36mLevel AA (Large)\e[0m  : \e[32mPASS\e[0m
+        \e[36mLevel AAA\e[0m         : \e[32mPASS\e[0m
+        \e[36mLevel AAA (Large)\e[0m : \e[32mPASS\e[0m
       MLS
 
       expect { sut.print_data(data) }.to output(expected).to_stdout
@@ -188,7 +188,7 @@ RSpec.describe RubyColorContrastChecker do
       expect(sut).not_to receive(:fetch_data)
       expect(sut).not_to receive(:print_data)
 
-      expect { sut.run }.to output("\n\nThe Hex color code is invalid.\n\n").to_stdout
+      expect { sut.run }.to output("\n\n\e[31mThe Hex color code is invalid.\e[0m\n\n").to_stdout
     end
 
     it "start the cli app and keep looping until user enters 'no' to exit the app" do
