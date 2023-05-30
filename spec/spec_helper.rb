@@ -1,6 +1,8 @@
 # Initialize SimpleCov before application code to track code coverage.
 require "simplecov"
-SimpleCov.start
+SimpleCov.start do
+  add_filter "/spec/"
+end
 
 require "simplecov-cobertura"
 SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
