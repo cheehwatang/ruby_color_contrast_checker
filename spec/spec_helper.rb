@@ -1,6 +1,6 @@
 # Initialize SimpleCov before application code to track code coverage.
 require "simplecov"
-SimpleCov.start "rails"
+SimpleCov.start
 
 # frozen_string_literal: true
 
