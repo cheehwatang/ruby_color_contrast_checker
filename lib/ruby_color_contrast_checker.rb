@@ -34,9 +34,23 @@ module RubyColorContrastChecker
     gets.chomp
   end
 
+  def red(string)
+    "\e[31m#{string}\e[0m"
+  end
+
+  def green(string)
+    "\e[32m#{string}\e[0m"
+  end
+
+  def colorize_float(float_string)
+    return red(float_string) if Float(float_string) < 4.5
+
+    green(float_string)
+  end
+
   def print_data(data)
     output = <<~MLS
-      Contrast Ratio    : #{data["ratio"]}
+      Contrast Ratio    : #{colorize_float(data["ratio"])}
 
       Level AA          : #{data["AA"].upcase}
       Level AA (Large)  : #{data["AALarge"].upcase}

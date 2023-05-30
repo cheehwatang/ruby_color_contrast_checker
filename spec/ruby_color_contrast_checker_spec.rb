@@ -90,8 +90,46 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
+  context "red method" do
+    it "takes a string and return red color string" do
+      actual = sut.red("1.0")
+
+      expect(actual).to eq("\e[31m1.0\e[0m")
+    end
+  end
+
+  context "green method" do
+    it "takes a string and return green color string" do
+      actual = sut.green("21")
+
+      expect(actual).to eq("\e[32m21\e[0m")
+    end
+  end
+
+  context "colorize_float method" do
+    it "takes a float string and colorize to red if float value less than 4.5" do
+      red_string = "\e[31m1.0\e[0m"
+
+      allow(sut).to receive(:green).and_return(red_string)
+      actual = sut.colorize_float("1.0")
+
+      expect(actual).to eq(red_string)
+    end
+
+    it "takes a float string and colorize to green if float value at least 4.5" do
+      green_string = "\e[32m21\e[0m"
+
+      allow(sut).to receive(:green).and_return(green_string)
+      actual = sut.colorize_float("21")
+
+      expect(actual).to eq(green_string)
+    end
+  end
+
   context "print_data method" do
     it "takes in the data hash and print the data" do
+      allow(sut).to receive(:colorize_float).and_return("\e[32m21\e[0m")
+
       data = {
         "ratio" => "21",
         "AA" => "pass",
@@ -101,7 +139,7 @@ RSpec.describe RubyColorContrastChecker do
       }
 
       expected = <<~MLS
-        Contrast Ratio    : 21
+        Contrast Ratio    : \e[32m21\e[0m
 
         Level AA          : PASS
         Level AA (Large)  : PASS
