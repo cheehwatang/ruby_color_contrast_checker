@@ -52,6 +52,9 @@ GEM
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
+    simplecov-cobertura (2.1.0)
+      rexml
+      simplecov (~> 0.19)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
     standard (1.28.4)
@@ -71,11 +74,12 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  rake (~> 13.0)
-  rspec (~> 3.0)
+  rake
+  rspec
   ruby_color_contrast_checker!
-  simplecov (~> 0.21.2)
-  standard (~> 1.3)
+  simplecov
+  simplecov-cobertura
+  standard
 
 BUNDLED WITH
    2.4.7
