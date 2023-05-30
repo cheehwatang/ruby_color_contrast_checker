@@ -2,6 +2,9 @@
 require "simplecov"
 SimpleCov.start
 
+require "simplecov-cobertura"
+SimpleCov.formatter = SimpleCov::Formatter::CoberturaFormatter
+
 # frozen_string_literal: true
 
 require "ruby_color_contrast_checker"
