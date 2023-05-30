@@ -1,13 +1,23 @@
 # frozen_string_literal: true
 
 RSpec.describe RubyColorContrastChecker do
-  sut = RubyColorContrastChecker
-
   it "has a version number" do
     expect(RubyColorContrastChecker::VERSION).not_to be nil
   end
 
-  context "self.valid_hex? method" do
+  it "has a self.run method to start the app" do
+    app_mock = Class.new { extend RubyColorContrastChecker }
+
+    allow(Class).to receive(:new).and_return(app_mock)
+
+    expect(app_mock).to receive(:run)
+
+    RubyColorContrastChecker.run
+  end
+
+  let(:sut) { Class.new { extend RubyColorContrastChecker } }
+
+  context "valid_hex? method" do
     it "returns true if the 6-digits Hex string provided is valid" do
       expect(sut.valid_hex?("FFFFFF")).to be(true)
     end
@@ -25,7 +35,7 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "self.fetch_data method" do
+  context "fetch_data method" do
     it "takes 2 valid 6-digit hex string arguments and returns hash of the json response" do
       response = Net::HTTPSuccess.new(1.0, "200", "OK")
       hex1 = "000000"
@@ -57,7 +67,7 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "self.convert_3hex_to_6hex method" do
+  context "convert_3hex_to_6hex method" do
     it "takes a valid 3-digit hex string argument and returns the 6-digit hex string" do
       inputs = ["000", "555", "aaa", "FFF"]
       expected = ["000000", "555555", "aaaaaa", "FFFFFF"]
@@ -70,7 +80,7 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "self.prompt_input method" do
+  context "prompt_input method" do
     it "takes a message, prints the message and returns the user input" do
       allow(sut).to receive(:gets).and_return("ABC")
       message = "Please enter ABC"
@@ -80,7 +90,7 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "self.print_data method" do
+  context "print_data method" do
     it "takes in the data hash and print the data" do
       data = {
         "ratio" => "21",
@@ -103,7 +113,7 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "self.run method" do
+  context "run method" do
     it "start the cli app, input valid hex strings, print data and exit app" do
       data = {data: "test"}
 

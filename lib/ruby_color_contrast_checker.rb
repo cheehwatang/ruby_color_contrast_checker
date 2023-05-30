@@ -6,11 +6,15 @@ require "net/http"
 require "json"
 
 module RubyColorContrastChecker
-  def self.valid_hex?(hex)
+  def self.run
+    Class.new { extend RubyColorContrastChecker }.run
+  end
+
+  def valid_hex?(hex)
     !!(hex =~ /^[a-f0-9]{6}$/i) || !!(hex =~ /^[a-f0-9]{3}$/i)
   end
 
-  def self.fetch_data(hex1, hex2)
+  def fetch_data(hex1, hex2)
     hex1 = convert_3hex_to_6hex(hex1) if hex1.length == 3
     hex2 = convert_3hex_to_6hex(hex2) if hex2.length == 3
 
@@ -20,17 +24,17 @@ module RubyColorContrastChecker
     JSON.parse(response.body)
   end
 
-  def self.convert_3hex_to_6hex(hex)
+  def convert_3hex_to_6hex(hex)
     chars = hex.chars
     "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
   end
 
-  def self.prompt_input(message)
+  def prompt_input(message)
     print message
     gets.chomp
   end
 
-  def self.print_data(data)
+  def print_data(data)
     output = <<~MLS
       Contrast Ratio    : #{data["ratio"]}
 
@@ -43,7 +47,7 @@ module RubyColorContrastChecker
     puts output
   end
 
-  def self.run
+  def run
     loop do
       puts
       first = prompt_input("Enter the first hex color string: \n> #")
