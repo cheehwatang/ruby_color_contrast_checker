@@ -71,11 +71,11 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  rake (~> 13.0)
-  rspec (~> 3.0)
+  rake
+  rspec
   ruby_color_contrast_checker!
-  simplecov (~> 0.21.2)
-  standard (~> 1.3)
+  simplecov
+  standard
 
 BUNDLED WITH
    2.4.7

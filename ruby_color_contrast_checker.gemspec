@@ -29,9 +29,4 @@ Gem::Specification.new do |spec|
   end
   spec.executables = ["contrast_checker"]
   spec.require_paths = ["lib"]
-
-  spec.add_development_dependency "rake", "~> 13.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "standard", "~> 1.3"
-  spec.add_development_dependency "simplecov", "~> 0.21.2"
 end
