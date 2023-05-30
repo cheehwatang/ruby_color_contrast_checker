@@ -76,8 +76,17 @@ $ gem install ruby_color_contrast_checker
 
 Run the `contrast_checker` executable:
 
-```console
+```shell
 $ contrast_checker
+
+       ------------------------------------
+      |  Welcome to Color Contrast Checker  |
+       ------------------------------------
+                \   ^__^
+                 \  (oo)_______
+                    (__)\       )\/\
+                        ||----w |
+                        ||     ||
 
 Enter the first hex color string:
 > #000000
@@ -91,6 +100,8 @@ Level AA (Large)  : PASS
 Level AAA         : PASS
 Level AAA (Large) : PASS
 ```
+
+![Color Contrast Checker CLI](./assets/color_contrast_checker_cli.png)
 
 <br />
 

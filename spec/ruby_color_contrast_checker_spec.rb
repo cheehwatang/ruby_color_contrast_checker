@@ -90,8 +90,67 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
+  context "red method" do
+    it "takes a string and return red color string" do
+      actual = sut.red("1.0")
+
+      expect(actual).to eq("\e[31m1.0\e[0m")
+    end
+  end
+
+  context "green method" do
+    it "takes a string and return green color string" do
+      actual = sut.green("21")
+
+      expect(actual).to eq("\e[32m21\e[0m")
+    end
+  end
+
+  context "colorize_float method" do
+    it "takes a float string and colorize to red if float value less than 4.5" do
+      red_string = "\e[31m1.0\e[0m"
+
+      allow(sut).to receive(:red).and_return(red_string)
+      actual = sut.colorize_float("1.0")
+
+      expect(actual).to eq(red_string)
+    end
+
+    it "takes a float string and colorize to green if float value at least 4.5" do
+      green_string = "\e[32m21\e[0m"
+
+      allow(sut).to receive(:green).and_return(green_string)
+      actual = sut.colorize_float("21")
+
+      expect(actual).to eq(green_string)
+    end
+  end
+
+  context "colorize_status method" do
+    it "takes a string, upcase and return the red string if the upcase is equal to 'FAIL'" do
+      red_string = "\e[31mFAIL\e[0m"
+
+      allow(sut).to receive(:red).and_return(red_string)
+      actual = sut.colorize_status("fail")
+
+      expect(actual).to eq(red_string)
+    end
+
+    it "takes a string, upcase and return the green string if the upcase is not equal to 'FAIL'" do
+      green_string = "\e[32mPASS\e[0m"
+
+      allow(sut).to receive(:green).and_return(green_string)
+      actual = sut.colorize_status("pass")
+
+      expect(actual).to eq(green_string)
+    end
+  end
+
   context "print_data method" do
     it "takes in the data hash and print the data" do
+      allow(sut).to receive(:colorize_float).and_return("\e[32m21\e[0m")
+      allow(sut).to receive(:colorize_status).and_return("\e[32mPASS\e[0m")
+
       data = {
         "ratio" => "21",
         "AA" => "pass",
@@ -101,15 +160,40 @@ RSpec.describe RubyColorContrastChecker do
       }
 
       expected = <<~MLS
-        Contrast Ratio    : 21
+        \e[36mContrast Ratio\e[0m    : \e[32m21\e[0m
 
-        Level AA          : PASS
-        Level AA (Large)  : PASS
-        Level AAA         : PASS
-        Level AAA (Large) : PASS
+        \e[36mLevel AA\e[0m          : \e[32mPASS\e[0m
+        \e[36mLevel AA (Large)\e[0m  : \e[32mPASS\e[0m
+        \e[36mLevel AAA\e[0m         : \e[32mPASS\e[0m
+        \e[36mLevel AAA (Large)\e[0m : \e[32mPASS\e[0m
       MLS
 
       expect { sut.print_data(data) }.to output(expected).to_stdout
+    end
+  end
+
+  context "print_welcome_message method" do
+    it "should print welcome message" do
+      expected = <<~MLS
+        \e[36m   ------------------------------------   \e[0m
+        \e[36m  |  Welcome to Color Contrast Checker  | \e[0m
+        \e[36m   ------------------------------------   \e[0m
+                  \\   ^__^
+                   \\  (oo)_______
+                      (__)\\       )\\/\\
+                          ||----w |
+                          ||     ||
+      MLS
+
+      expect { sut.print_welcome_message }.to output(expected).to_stdout
+    end
+  end
+
+  context "print_error_message method" do
+    it "should print error message" do
+      expected = "\e[31mThe Hex color code is invalid.\e[0m\n"
+
+      expect { sut.print_error_message }.to output(expected).to_stdout
     end
   end
 
@@ -128,8 +212,9 @@ RSpec.describe RubyColorContrastChecker do
       allow(sut).to receive(:prompt_input).and_return("000", "GGG", "no")
       expect(sut).not_to receive(:fetch_data)
       expect(sut).not_to receive(:print_data)
+      expect(sut).to receive(:print_error_message)
 
-      expect { sut.run }.to output("\n\nThe Hex color code is invalid.\n\n").to_stdout
+      sut.run
     end
 
     it "start the cli app and keep looping until user enters 'no' to exit the app" do

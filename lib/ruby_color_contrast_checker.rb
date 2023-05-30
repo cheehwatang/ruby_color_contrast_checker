@@ -34,35 +34,78 @@ module RubyColorContrastChecker
     gets.chomp
   end
 
+  def red(string)
+    "\e[31m#{string}\e[0m"
+  end
+
+  def green(string)
+    "\e[32m#{string}\e[0m"
+  end
+
+  def colorize_float(float_string)
+    return red(float_string) if Float(float_string) < 4.5
+
+    green(float_string)
+  end
+
+  def colorize_status(status_string)
+    status_string = status_string.upcase
+
+    return red(status_string) if status_string == "FAIL"
+
+    green(status_string)
+  end
+
   def print_data(data)
     output = <<~MLS
-      Contrast Ratio    : #{data["ratio"]}
+      \e[36mContrast Ratio\e[0m    : #{colorize_float(data["ratio"])}
 
-      Level AA          : #{data["AA"].upcase}
-      Level AA (Large)  : #{data["AALarge"].upcase}
-      Level AAA         : #{data["AAA"].upcase}
-      Level AAA (Large) : #{data["AAALarge"].upcase}
+      \e[36mLevel AA\e[0m          : #{colorize_status(data["AA"])}
+      \e[36mLevel AA (Large)\e[0m  : #{colorize_status(data["AALarge"])}
+      \e[36mLevel AAA\e[0m         : #{colorize_status(data["AAA"])}
+      \e[36mLevel AAA (Large)\e[0m : #{colorize_status(data["AAALarge"])}
     MLS
 
     puts output
   end
 
+  def print_welcome_message
+    welcome_message = <<~MLS
+      \e[36m   ------------------------------------   \e[0m
+      \e[36m  |  Welcome to Color Contrast Checker  | \e[0m
+      \e[36m   ------------------------------------   \e[0m
+                \\   ^__^
+                 \\  (oo)_______
+                    (__)\\       )\\/\\
+                        ||----w |
+                        ||     ||
+    MLS
+
+    puts welcome_message
+  end
+
+  def print_error_message
+    puts "\e[31mThe Hex color code is invalid.\e[0m"
+  end
+
   def run
+    print_welcome_message
+
     loop do
       puts
-      first = prompt_input("Enter the first hex color string: \n> #")
-      second = prompt_input("Enter the second hex color string: \n> #")
+      first = prompt_input("\e[36mEnter the first hex color string:\e[0m \n\e[30m> #\e[0m")
+      second = prompt_input("\e[36mEnter the second hex color string:\e[0m \n\e[30m> #\e[0m")
       puts
 
       if !valid_hex?(first) || !valid_hex?(second)
-        puts "The Hex color code is invalid."
+        print_error_message
       else
         data = fetch_data(first, second)
         print_data(data)
       end
 
       puts
-      input = prompt_input("Continue? (yes / no) ")
+      input = prompt_input("\e[33mContinue?\e[0m (\e[32myes\e[0m / \e[31mno\e[0m) ")
       break if input.downcase == "no"
     end
   end
