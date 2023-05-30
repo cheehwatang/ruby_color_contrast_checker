@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
       (File.expand_path(f) == __FILE__) || f.match(%r{\A(?:(?:bin|test|spec|features)/|\.(?:git|circleci)|appveyor)})
     end
   end
-  spec.executables = ["ruby_color_contrast_checker"]
+  spec.executables = ["contrast_checker"]
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "rake", "~> 13.0"
