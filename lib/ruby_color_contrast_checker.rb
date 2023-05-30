@@ -69,7 +69,28 @@ module RubyColorContrastChecker
     puts output
   end
 
+  def print_welcome_message
+    welcome_message = <<~MLS
+      \e[36m   ------------------------------------   \e[0m
+      \e[36m  |  Welcome to Color Contrast Checker  | \e[0m
+      \e[36m   ------------------------------------   \e[0m
+                \\   ^__^
+                 \\  (oo)_______
+                    (__)\\       )\\/\\
+                        ||----w |
+                        ||     ||
+    MLS
+
+    puts welcome_message
+  end
+
+  def print_error_message
+    puts "\e[31mThe Hex color code is invalid.\e[0m"
+  end
+
   def run
+    print_welcome_message
+
     loop do
       puts
       first = prompt_input("\e[36mEnter the first hex color string:\e[0m \n\e[30m> #\e[0m")
@@ -77,7 +98,7 @@ module RubyColorContrastChecker
       puts
 
       if !valid_hex?(first) || !valid_hex?(second)
-        puts "\e[31mThe Hex color code is invalid.\e[0m"
+        print_error_message
       else
         data = fetch_data(first, second)
         print_data(data)

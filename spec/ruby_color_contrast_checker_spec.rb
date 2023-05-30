@@ -172,6 +172,31 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
+  context "print_welcome_message method" do
+    it "should print welcome message" do
+      expected = <<~MLS
+        \e[36m   ------------------------------------   \e[0m
+        \e[36m  |  Welcome to Color Contrast Checker  | \e[0m
+        \e[36m   ------------------------------------   \e[0m
+                  \\   ^__^
+                   \\  (oo)_______
+                      (__)\\       )\\/\\
+                          ||----w |
+                          ||     ||
+      MLS
+
+      expect { sut.print_welcome_message }.to output(expected).to_stdout
+    end
+  end
+
+  context "print_error_message method" do
+    it "should print error message" do
+      expected = "\e[31mThe Hex color code is invalid.\e[0m\n"
+
+      expect { sut.print_error_message }.to output(expected).to_stdout
+    end
+  end
+
   context "run method" do
     data = {"ratio" => "21"}
 
@@ -187,8 +212,9 @@ RSpec.describe RubyColorContrastChecker do
       allow(sut).to receive(:prompt_input).and_return("000", "GGG", "no")
       expect(sut).not_to receive(:fetch_data)
       expect(sut).not_to receive(:print_data)
+      expect(sut).to receive(:print_error_message)
 
-      expect { sut.run }.to output("\n\n\e[31mThe Hex color code is invalid.\e[0m\n\n").to_stdout
+      sut.run
     end
 
     it "start the cli app and keep looping until user enters 'no' to exit the app" do
