@@ -62,6 +62,12 @@ It is recommended to fulfill at least Level AA for your projects.
 
 <br />
 
+## Demo
+
+![Color Contrast Checker CLI](./assets/color_contrast_checker_cli.gif)
+
+<br />
+
 ## Installation
 
 Install the gem:
@@ -100,8 +106,6 @@ Level AA (Large)  : PASS
 Level AAA         : PASS
 Level AAA (Large) : PASS
 ```
-
-![Color Contrast Checker CLI](./assets/color_contrast_checker_cli.png)
 
 <br />
 
