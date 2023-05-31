@@ -77,6 +77,14 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
+  context "calculate_contrast_ratio method" do
+    it "takes 2 6-digits hex value and returns the contrast ratio" do
+      actual = sut.calculate_contrast_ratio("0088FF", "112233")
+
+      expect(actual).to eq(4.59)
+    end
+  end
+
   context "convert_6hex_to_rgb_hash method" do
     it "takes a valid 6-digit hex string argument and returns the rgb hash" do
       inputs = ["0088FF", "112233"]

@@ -41,6 +41,17 @@ module RubyColorContrastChecker
     "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
   end
 
+  def calculate_contrast_ratio(hex1, hex2)
+    rgb1 = convert_6hex_to_rgb_hash(hex1)
+    rgb2 = convert_6hex_to_rgb_hash(hex2)
+
+    luminance1 = calculate_luminance(rgb1)
+    luminance2 = calculate_luminance(rgb2)
+
+    ((luminance1 > luminance2) ? ((luminance1 + 0.05) / (luminance2 + 0.05)) : ((luminance2 + 0.05) / (luminance1 + 0.05))).round(2)
+  end
+
+  # Helper methods to calculate contrast ratio
   def convert_6hex_to_rgb_hash(hex)
     value = Integer(hex, 16)
     r = (value >> 16) & 255
