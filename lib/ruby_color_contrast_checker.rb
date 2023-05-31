@@ -41,6 +41,15 @@ module RubyColorContrastChecker
     "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
   end
 
+  def convert_6hex_to_rgb_hash(hex)
+    value = Integer(hex, 16)
+    r = (value >> 16) & 255
+    g = (value >> 8) & 255
+    b = value & 255
+
+    {r:, g:, b:}
+  end
+
   def fetch_data(hex1, hex2)
     hex1 = convert_3hex_to_6hex(hex1) if hex1.length == 3
     hex2 = convert_3hex_to_6hex(hex2) if hex2.length == 3

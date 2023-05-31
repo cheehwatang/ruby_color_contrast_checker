@@ -77,6 +77,19 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
+  context "convert_6hex_to_rgb_hash method" do
+    it "takes a valid 6-digit hex string argument and returns the rgb hash" do
+      inputs = ["0088FF", "112233"]
+      expected = [{r: 0, g: 136, b: 255}, {r: 17, g: 34, b: 51}]
+
+      inputs.each_with_index do |input, index|
+        actual = sut.convert_6hex_to_rgb_hash(input)
+
+        expect(actual).to eq(expected[index])
+      end
+    end
+  end
+
   context "fetch_data method" do
     it "takes 2 valid 6-digit hex string arguments and returns hash of the json response" do
       response = Net::HTTPSuccess.new(1.0, "200", "OK")
