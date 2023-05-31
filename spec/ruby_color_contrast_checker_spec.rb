@@ -90,6 +90,19 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
+  context "calculate_luminance method" do
+    it "takes rgb hash and returns the relative luminance value" do
+      inputs = [{r: 0, g: 136, b: 255}, {r: 17, g: 34, b: 51}]
+      expected = [0.2483, 0.015]
+
+      inputs.each_with_index do |input, index|
+        actual = sut.calculate_luminance(input)
+
+        expect(actual).to eq(expected[index])
+      end
+    end
+  end
+
   context "fetch_data method" do
     it "takes 2 valid 6-digit hex string arguments and returns hash of the json response" do
       response = Net::HTTPSuccess.new(1.0, "200", "OK")

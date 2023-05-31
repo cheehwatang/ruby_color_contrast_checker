@@ -50,6 +50,15 @@ module RubyColorContrastChecker
     {r:, g:, b:}
   end
 
+  def calculate_luminance(rgb)
+    rgb.each do |key, value|
+      value /= 255.0
+      rgb[key] = ((value <= 0.03928) ? value / 12.92 : ((value + 0.055) / 1.055)**2.4)
+    end
+
+    (rgb[:r] * 0.2126 + rgb[:g] * 0.7152 + rgb[:b] * 0.0722).round(4)
+  end
+
   def fetch_data(hex1, hex2)
     hex1 = convert_3hex_to_6hex(hex1) if hex1.length == 3
     hex2 = convert_3hex_to_6hex(hex2) if hex2.length == 3
