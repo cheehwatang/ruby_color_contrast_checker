@@ -47,10 +47,10 @@ Further information can be found [here](https://webaim.org/articles/contrast/).
 
 In summary:
 
-- Level AA : Ratio > 4.5
-- Level AA (Large) : Ratio > 3.0
-- Level AAA : Ratio > 7.0
-- Level AAA (Large) : Ratio > 4.5
+- Level AA : Ratio >= 4.5
+- Level AA (Large) : Ratio >= 3.0
+- Level AAA : Ratio >= 7.0
+- Level AAA (Large) : Ratio >= 4.5
 
 Note:
 
@@ -133,5 +133,4 @@ Everyone interacting in the Ruby Color Contrast Checker project's codebases, iss
 
 ## 🌟 Special Thanks
 
-- [WebAIM Contrast Checker API](https://webaim.org/resources/contrastchecker/) for the contrast checker API.
 - [Richard Bates](https://github.com/richo225) for the [blog post](https://richardbates.dev/blog/2023-05-05) on releasing a gem.

@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "ruby_color_contrast_checker/version"
-require "uri"
-require "net/http"
-require "json"
 
 module RubyColorContrastChecker
   def self.run
@@ -22,7 +19,7 @@ module RubyColorContrastChecker
       if !valid_hex?(first) || !valid_hex?(second)
         print_error_message
       else
-        data = fetch_data(first, second)
+        data = get_result(first, second)
         print_data(data)
       end
 
@@ -41,14 +38,52 @@ module RubyColorContrastChecker
     "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
   end
 
-  def fetch_data(hex1, hex2)
+  def calculate_contrast_ratio(hex1, hex2)
+    rgb1 = convert_6hex_to_rgb_hash(hex1)
+    rgb2 = convert_6hex_to_rgb_hash(hex2)
+
+    luminance1 = calculate_luminance(rgb1)
+    luminance2 = calculate_luminance(rgb2)
+
+    ((luminance1 > luminance2) ? ((luminance1 + 0.05) / (luminance2 + 0.05)) : ((luminance2 + 0.05) / (luminance1 + 0.05))).round(2)
+  end
+
+  # Helper methods to calculate contrast ratio
+  def convert_6hex_to_rgb_hash(hex)
+    value = Integer(hex, 16)
+    r = (value >> 16) & 255
+    g = (value >> 8) & 255
+    b = value & 255
+
+    {r:, g:, b:}
+  end
+
+  def calculate_luminance(rgb)
+    rgb.each do |key, value|
+      value /= 255.0
+      rgb[key] = ((value <= 0.03928) ? value / 12.92 : ((value + 0.055) / 1.055)**2.4)
+    end
+
+    (rgb[:r] * 0.2126 + rgb[:g] * 0.7152 + rgb[:b] * 0.0722).round(4)
+  end
+
+  def pass_or_fail(value, threshold)
+    (value >= threshold) ? "PASS" : "FAIL"
+  end
+
+  def get_result(hex1, hex2)
     hex1 = convert_3hex_to_6hex(hex1) if hex1.length == 3
     hex2 = convert_3hex_to_6hex(hex2) if hex2.length == 3
 
-    uri = URI.parse("https://webaim.org/resources/contrastchecker/?fcolor=#{hex1}&bcolor=#{hex2}&api")
-    response = Net::HTTP.get_response(uri)
+    contrast_ratio = calculate_contrast_ratio(hex1, hex2)
 
-    JSON.parse(response.body)
+    {
+      "ratio" => contrast_ratio.to_s,
+      "AA" => pass_or_fail(contrast_ratio, 4.5),
+      "AALarge" => pass_or_fail(contrast_ratio, 3.0),
+      "AAA" => pass_or_fail(contrast_ratio, 7.0),
+      "AAALarge" => pass_or_fail(contrast_ratio, 4.5)
+    }
   end
 
   def prompt_input(message)
