@@ -22,7 +22,7 @@ RSpec.describe RubyColorContrastChecker do
 
     it "start the cli app, input valid hex strings, print data and exit app" do
       allow(sut).to receive(:prompt_input).and_return("000", "FFF", "no")
-      expect(sut).to receive(:fetch_data).with("000", "FFF").and_return(data)
+      expect(sut).to receive(:get_result).with("000", "FFF").and_return(data)
       expect(sut).to receive(:print_data).with(data)
 
       sut.run
@@ -30,7 +30,7 @@ RSpec.describe RubyColorContrastChecker do
 
     it "start the cli app, input invalid hex strings, print error message and exit app" do
       allow(sut).to receive(:prompt_input).and_return("000", "GGG", "no")
-      expect(sut).not_to receive(:fetch_data)
+      expect(sut).not_to receive(:get_result)
       expect(sut).not_to receive(:print_data)
       expect(sut).to receive(:print_error_message)
 
@@ -39,7 +39,7 @@ RSpec.describe RubyColorContrastChecker do
 
     it "start the cli app and keep looping until user enters 'no' to exit the app" do
       allow(sut).to receive(:prompt_input).and_return("000", "FFF", "yes", "000", "FFF", "no")
-      expect(sut).to receive(:fetch_data).twice.with("000", "FFF").and_return(data)
+      expect(sut).to receive(:get_result).twice.with("000", "FFF").and_return(data)
       expect(sut).to receive(:print_data).twice.with(data)
 
       sut.run
@@ -111,35 +111,51 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "fetch_data method" do
-    it "takes 2 valid 6-digit hex string arguments and returns hash of the json response" do
-      response = Net::HTTPSuccess.new(1.0, "200", "OK")
-      hex1 = "000000"
-      hex2 = "FFFFFF"
+  context "pass_or_fail method" do
+    it "takes a value and a threshold, and returns 'PASS' if at least threshold" do
+      actual = sut.pass_or_fail(4.50, 4.5)
 
-      expect(URI).to receive(:parse).with("https://webaim.org/resources/contrastchecker/?fcolor=#{hex1}&bcolor=#{hex2}&api").and_return("url")
-      expect(Net::HTTP).to receive(:get_response).with("url").and_return(response)
-      expect(response).to receive(:body).and_return("data")
-      expect(JSON).to receive(:parse).with("data").and_return("data")
-
-      actual = sut.fetch_data(hex1, hex2)
-
-      expect(actual).to eq("data")
+      expect(actual).to eq("PASS")
     end
 
-    it "takes 2 valid 3-digit hex string arguments and returns hash of the json response" do
-      response = Net::HTTPSuccess.new(1.0, "200", "OK")
+    it "takes a value and a threshold, and returns 'FAIL' if less than threshold" do
+      actual = sut.pass_or_fail(4.49, 4.5)
+
+      expect(actual).to eq("FAIL")
+    end
+  end
+
+  context "get_result method" do
+    it "takes 2 valid 6-digit hex string arguments and returns result in hash" do
+      hex1 = "000000"
+      hex2 = "777777"
+      expected = {
+        "ratio" => "4.69",
+        "AA" => "PASS",
+        "AALarge" => "PASS",
+        "AAA" => "FAIL",
+        "AAALarge" => "PASS"
+      }
+
+      actual = sut.get_result(hex1, hex2)
+
+      expect(actual).to eq(expected)
+    end
+
+    it "takes 2 valid 3-digit hex string arguments and returns result in hash" do
       hex1 = "000"
-      hex2 = "FFF"
+      hex2 = "777"
+      expected = {
+        "ratio" => "4.69",
+        "AA" => "PASS",
+        "AALarge" => "PASS",
+        "AAA" => "FAIL",
+        "AAALarge" => "PASS"
+      }
 
-      expect(URI).to receive(:parse).with("https://webaim.org/resources/contrastchecker/?fcolor=000000&bcolor=FFFFFF&api").and_return("url")
-      expect(Net::HTTP).to receive(:get_response).with("url").and_return(response)
-      expect(response).to receive(:body).and_return("data")
-      expect(JSON).to receive(:parse).with("data").and_return("data")
+      actual = sut.get_result(hex1, hex2)
 
-      actual = sut.fetch_data(hex1, hex2)
-
-      expect(actual).to eq("data")
+      expect(actual).to eq(expected)
     end
   end
 

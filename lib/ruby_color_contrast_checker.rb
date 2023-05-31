@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "ruby_color_contrast_checker/version"
-require "uri"
-require "net/http"
-require "json"
 
 module RubyColorContrastChecker
   def self.run
@@ -22,7 +19,7 @@ module RubyColorContrastChecker
       if !valid_hex?(first) || !valid_hex?(second)
         print_error_message
       else
-        data = fetch_data(first, second)
+        data = get_result(first, second)
         print_data(data)
       end
 
@@ -70,14 +67,23 @@ module RubyColorContrastChecker
     (rgb[:r] * 0.2126 + rgb[:g] * 0.7152 + rgb[:b] * 0.0722).round(4)
   end
 
-  def fetch_data(hex1, hex2)
+  def pass_or_fail(value, threshold)
+    (value >= threshold) ? "PASS" : "FAIL"
+  end
+
+  def get_result(hex1, hex2)
     hex1 = convert_3hex_to_6hex(hex1) if hex1.length == 3
     hex2 = convert_3hex_to_6hex(hex2) if hex2.length == 3
 
-    uri = URI.parse("https://webaim.org/resources/contrastchecker/?fcolor=#{hex1}&bcolor=#{hex2}&api")
-    response = Net::HTTP.get_response(uri)
+    contrast_ratio = calculate_contrast_ratio(hex1, hex2)
 
-    JSON.parse(response.body)
+    {
+      "ratio" => contrast_ratio.to_s,
+      "AA" => pass_or_fail(contrast_ratio, 4.5),
+      "AALarge" => pass_or_fail(contrast_ratio, 3.0),
+      "AAA" => pass_or_fail(contrast_ratio, 7.0),
+      "AAALarge" => pass_or_fail(contrast_ratio, 4.5)
+    }
   end
 
   def prompt_input(message)
