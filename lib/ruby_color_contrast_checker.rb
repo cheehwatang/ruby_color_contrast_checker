@@ -10,8 +10,35 @@ module RubyColorContrastChecker
     Class.new { extend RubyColorContrastChecker }.run
   end
 
+  def run
+    print_welcome_message
+
+    loop do
+      puts
+      first = prompt_input("\e[36mEnter the first hex color string:\e[0m \n\e[30m> #\e[0m")
+      second = prompt_input("\e[36mEnter the second hex color string:\e[0m \n\e[30m> #\e[0m")
+      puts
+
+      if !valid_hex?(first) || !valid_hex?(second)
+        print_error_message
+      else
+        data = fetch_data(first, second)
+        print_data(data)
+      end
+
+      puts
+      input = prompt_input("\e[33mContinue?\e[0m (\e[32myes\e[0m / \e[31mno\e[0m) ")
+      break if input.downcase == "no"
+    end
+  end
+
   def valid_hex?(hex)
     !!(hex =~ /^[a-f0-9]{6}$/i) || !!(hex =~ /^[a-f0-9]{3}$/i)
+  end
+
+  def convert_3hex_to_6hex(hex)
+    chars = hex.chars
+    "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
   end
 
   def fetch_data(hex1, hex2)
@@ -24,36 +51,9 @@ module RubyColorContrastChecker
     JSON.parse(response.body)
   end
 
-  def convert_3hex_to_6hex(hex)
-    chars = hex.chars
-    "#{chars[0]}#{chars[0]}#{chars[1]}#{chars[1]}#{chars[2]}#{chars[2]}"
-  end
-
   def prompt_input(message)
     print message
     gets.chomp
-  end
-
-  def red(string)
-    "\e[31m#{string}\e[0m"
-  end
-
-  def green(string)
-    "\e[32m#{string}\e[0m"
-  end
-
-  def colorize_float(float_string)
-    return red(float_string) if Float(float_string) < 4.5
-
-    green(float_string)
-  end
-
-  def colorize_status(status_string)
-    status_string = status_string.upcase
-
-    return red(status_string) if status_string == "FAIL"
-
-    green(status_string)
   end
 
   def print_data(data)
@@ -88,25 +88,27 @@ module RubyColorContrastChecker
     puts "\e[31mThe Hex color code is invalid.\e[0m"
   end
 
-  def run
-    print_welcome_message
+  # Helper methods to colorize string based on the conditions.
+  def colorize_float(float_string)
+    return red(float_string) if Float(float_string) < 4.5
 
-    loop do
-      puts
-      first = prompt_input("\e[36mEnter the first hex color string:\e[0m \n\e[30m> #\e[0m")
-      second = prompt_input("\e[36mEnter the second hex color string:\e[0m \n\e[30m> #\e[0m")
-      puts
+    green(float_string)
+  end
 
-      if !valid_hex?(first) || !valid_hex?(second)
-        print_error_message
-      else
-        data = fetch_data(first, second)
-        print_data(data)
-      end
+  def colorize_status(status_string)
+    status_string = status_string.upcase
 
-      puts
-      input = prompt_input("\e[33mContinue?\e[0m (\e[32myes\e[0m / \e[31mno\e[0m) ")
-      break if input.downcase == "no"
-    end
+    return red(status_string) if status_string == "FAIL"
+
+    green(status_string)
+  end
+
+  # Helper methods to colorize string.
+  def red(string)
+    "\e[31m#{string}\e[0m"
+  end
+
+  def green(string)
+    "\e[32m#{string}\e[0m"
   end
 end

@@ -17,6 +17,35 @@ RSpec.describe RubyColorContrastChecker do
 
   let(:sut) { Class.new { extend RubyColorContrastChecker } }
 
+  context "run method" do
+    data = {"ratio" => "21"}
+
+    it "start the cli app, input valid hex strings, print data and exit app" do
+      allow(sut).to receive(:prompt_input).and_return("000", "FFF", "no")
+      expect(sut).to receive(:fetch_data).with("000", "FFF").and_return(data)
+      expect(sut).to receive(:print_data).with(data)
+
+      sut.run
+    end
+
+    it "start the cli app, input invalid hex strings, print error message and exit app" do
+      allow(sut).to receive(:prompt_input).and_return("000", "GGG", "no")
+      expect(sut).not_to receive(:fetch_data)
+      expect(sut).not_to receive(:print_data)
+      expect(sut).to receive(:print_error_message)
+
+      sut.run
+    end
+
+    it "start the cli app and keep looping until user enters 'no' to exit the app" do
+      allow(sut).to receive(:prompt_input).and_return("000", "FFF", "yes", "000", "FFF", "no")
+      expect(sut).to receive(:fetch_data).twice.with("000", "FFF").and_return(data)
+      expect(sut).to receive(:print_data).twice.with(data)
+
+      sut.run
+    end
+  end
+
   context "valid_hex? method" do
     it "returns true if the 6-digits Hex string provided is valid" do
       expect(sut.valid_hex?("FFFFFF")).to be(true)
@@ -32,6 +61,19 @@ RSpec.describe RubyColorContrastChecker do
 
     it "returns false if the 3-digits Hex string provided is invalid" do
       expect(sut.valid_hex?("GGG")).to be(false)
+    end
+  end
+
+  context "convert_3hex_to_6hex method" do
+    it "takes a valid 3-digit hex string argument and returns the 6-digit hex string" do
+      inputs = ["000", "555", "aaa", "FFF"]
+      expected = ["000000", "555555", "aaaaaa", "FFFFFF"]
+
+      inputs.each_with_index do |input, index|
+        actual = sut.convert_3hex_to_6hex(input)
+
+        expect(actual).to eq(expected[index])
+      end
     end
   end
 
@@ -67,19 +109,6 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "convert_3hex_to_6hex method" do
-    it "takes a valid 3-digit hex string argument and returns the 6-digit hex string" do
-      inputs = ["000", "555", "aaa", "FFF"]
-      expected = ["000000", "555555", "aaaaaa", "FFFFFF"]
-
-      inputs.each_with_index do |input, index|
-        actual = sut.convert_3hex_to_6hex(input)
-
-        expect(actual).to eq(expected[index])
-      end
-    end
-  end
-
   context "prompt_input method" do
     it "takes a message, prints the message and returns the user input" do
       allow(sut).to receive(:gets).and_return("ABC")
@@ -87,62 +116,6 @@ RSpec.describe RubyColorContrastChecker do
 
       expect(sut.prompt_input(message)).to eq("ABC")
       expect { sut.prompt_input(message) }.to output(message).to_stdout
-    end
-  end
-
-  context "red method" do
-    it "takes a string and return red color string" do
-      actual = sut.red("1.0")
-
-      expect(actual).to eq("\e[31m1.0\e[0m")
-    end
-  end
-
-  context "green method" do
-    it "takes a string and return green color string" do
-      actual = sut.green("21")
-
-      expect(actual).to eq("\e[32m21\e[0m")
-    end
-  end
-
-  context "colorize_float method" do
-    it "takes a float string and colorize to red if float value less than 4.5" do
-      red_string = "\e[31m1.0\e[0m"
-
-      allow(sut).to receive(:red).and_return(red_string)
-      actual = sut.colorize_float("1.0")
-
-      expect(actual).to eq(red_string)
-    end
-
-    it "takes a float string and colorize to green if float value at least 4.5" do
-      green_string = "\e[32m21\e[0m"
-
-      allow(sut).to receive(:green).and_return(green_string)
-      actual = sut.colorize_float("21")
-
-      expect(actual).to eq(green_string)
-    end
-  end
-
-  context "colorize_status method" do
-    it "takes a string, upcase and return the red string if the upcase is equal to 'FAIL'" do
-      red_string = "\e[31mFAIL\e[0m"
-
-      allow(sut).to receive(:red).and_return(red_string)
-      actual = sut.colorize_status("fail")
-
-      expect(actual).to eq(red_string)
-    end
-
-    it "takes a string, upcase and return the green string if the upcase is not equal to 'FAIL'" do
-      green_string = "\e[32mPASS\e[0m"
-
-      allow(sut).to receive(:green).and_return(green_string)
-      actual = sut.colorize_status("pass")
-
-      expect(actual).to eq(green_string)
     end
   end
 
@@ -197,32 +170,59 @@ RSpec.describe RubyColorContrastChecker do
     end
   end
 
-  context "run method" do
-    data = {"ratio" => "21"}
+  context "colorize_float method" do
+    it "takes a float string and colorize to red if float value less than 4.5" do
+      red_string = "\e[31m1.0\e[0m"
 
-    it "start the cli app, input valid hex strings, print data and exit app" do
-      allow(sut).to receive(:prompt_input).and_return("000", "FFF", "no")
-      expect(sut).to receive(:fetch_data).with("000", "FFF").and_return(data)
-      expect(sut).to receive(:print_data).with(data)
+      allow(sut).to receive(:red).and_return(red_string)
+      actual = sut.colorize_float("1.0")
 
-      sut.run
+      expect(actual).to eq(red_string)
     end
 
-    it "start the cli app, input invalid hex strings, print error message and exit app" do
-      allow(sut).to receive(:prompt_input).and_return("000", "GGG", "no")
-      expect(sut).not_to receive(:fetch_data)
-      expect(sut).not_to receive(:print_data)
-      expect(sut).to receive(:print_error_message)
+    it "takes a float string and colorize to green if float value at least 4.5" do
+      green_string = "\e[32m21\e[0m"
 
-      sut.run
+      allow(sut).to receive(:green).and_return(green_string)
+      actual = sut.colorize_float("21")
+
+      expect(actual).to eq(green_string)
+    end
+  end
+
+  context "colorize_status method" do
+    it "takes a string, upcase and return the red string if the upcase is equal to 'FAIL'" do
+      red_string = "\e[31mFAIL\e[0m"
+
+      allow(sut).to receive(:red).and_return(red_string)
+      actual = sut.colorize_status("fail")
+
+      expect(actual).to eq(red_string)
     end
 
-    it "start the cli app and keep looping until user enters 'no' to exit the app" do
-      allow(sut).to receive(:prompt_input).and_return("000", "FFF", "yes", "000", "FFF", "no")
-      expect(sut).to receive(:fetch_data).twice.with("000", "FFF").and_return(data)
-      expect(sut).to receive(:print_data).twice.with(data)
+    it "takes a string, upcase and return the green string if the upcase is not equal to 'FAIL'" do
+      green_string = "\e[32mPASS\e[0m"
 
-      sut.run
+      allow(sut).to receive(:green).and_return(green_string)
+      actual = sut.colorize_status("pass")
+
+      expect(actual).to eq(green_string)
+    end
+  end
+
+  context "red method" do
+    it "takes a string and return red color string" do
+      actual = sut.red("1.0")
+
+      expect(actual).to eq("\e[31m1.0\e[0m")
+    end
+  end
+
+  context "green method" do
+    it "takes a string and return green color string" do
+      actual = sut.green("21")
+
+      expect(actual).to eq("\e[32m21\e[0m")
     end
   end
 end
