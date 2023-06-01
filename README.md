@@ -6,8 +6,8 @@
 <br />
 
 <div align="center">
-  <a href="https://badge.fury.io/rb/ruby_color_contrast_checker">
-    <img alt="Gem Version" src="https://badge.fury.io/rb/ruby_color_contrast_checker.svg" />
+  <a href="https://rubygems.org/gems/ruby_color_contrast_checker">
+    <img alt="Gem Version" src="https://img.shields.io/gem/v/ruby_color_contrast_checker" />
   </a>
   &nbsp;
   <a href="https://github.com/cheehwatang/ruby_color_contrast_checker/blob/main/LICENSE.txt">
